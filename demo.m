@@ -96,7 +96,7 @@ if (flag~=0)
     axes(handles.greyscale_axes);
     imshow(handles.greyscaleFig);
 end
-
+guidata(hObject, handles);% update the handles. 
 
 % --- Executes on selection change in colorinfo_pum.
 function colorinfo_pum_Callback(hObject, eventdata, handles)
