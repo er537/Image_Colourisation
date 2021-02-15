@@ -1,6 +1,10 @@
 clear,clc,close all
 %input colorinfoFig, greyscaleFig
 C=imread('Picture/blurred1.jpg');
+
+%%%%%%%%%%%%%%%%%%%%update on 15 Feb by Shenghao%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+C = imresize(C,0.5);% If you need to scale your image, use this line. 
+%%%%%%%%%%%%%%%%%%%%update on 15 Feb by Shenghao%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 proportion=0.005;
 delta=2e-5;
 p=0.5;
@@ -13,6 +17,12 @@ sigma2 = 100;
 y0 = [delta;p;sigma1;sigma2];
 
 options = optimset('PlotFcns',@optimplotfval);
+
+%%%%%%%%%%%%%%%%%%%%update on 15 Feb by Shenghao%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+global Iter; % calculate the number of iteration 
+Iter = 0;
+%%%%%%%%%%%%%%%%%%%%update on 15 Feb by Shenghao%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 y = fminsearch(@(y)error_func(C,G,D,y),y0,options);
 
@@ -72,10 +82,26 @@ function error_func = error_func(C,G,D,y)
         F_G = F_G + a_G(j).*KK;
         F_B = F_B + a_B(j).*KK;
     end
-
-    error_func = sqrt((norm(F_R-double(C(:,:,1)),'fro')^2+...
+    
+    
+%%%%%%%%%%%%%%%%%%%%update on 15 Feb by Shenghao%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%put 3m inside the sqrt. Maybe unnecessary.
+    error_func = sqrt(((norm(F_R-double(C(:,:,1)),'fro')^2+...
                 norm(F_G-double(C(:,:,2)),'fro')^2+...
-                    norm(F_B-double(C(:,:,3)),'fro')^2))/(3*m);
+                    norm(F_B-double(C(:,:,3)),'fro')^2))/(3*m));
+%%%%%%%%%%%%%%%%%%%%update on 15 Feb by Shenghao%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    %%%%%%%%%%%%%%%%%%%%update on 15 Feb by Shenghao%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                
+    global Iter;
+    % show the result of the iteration every 10 times.
+    if(mod(Iter,10)==0)  
+        figure
+        C2 = cat(3,F_R,F_G,F_B);
+        C2 = uint8(C2);
+        imshow(C2);
+    end
+    Iter = Iter+1; % update the number of the iteration.
+    %%%%%%%%%%%%%%%%%%%%update on 15 Feb by Shenghao%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 
 end
  
